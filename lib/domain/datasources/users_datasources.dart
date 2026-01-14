@@ -1,0 +1,12 @@
+
+import 'package:saltita/domain/entities/user_entity.dart';
+
+abstract class UsersDatasources {
+
+Future<List<UserEntity>> getUsers();
+Future<UserEntity> getUserById(String id);
+Future<UserEntity> createUser(UserEntity user);
+Future<UserEntity> updateUser(UserEntity user);
+Future<void> deleteUser(String id);
+
+}

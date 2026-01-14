@@ -31,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
     'Ver todos'
   ];
 
+  final PageController _pageController = PageController(viewportFraction: 0.85);
+
   // Dummy Data for Carousel
   final List<Map<String, String>> featuredArtists = [
     {
@@ -107,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 16,
           children: [
             // Section 1: Carousel
             const Padding(
@@ -117,19 +120,26 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(
-              height: 180,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+              height: 200, // Increased height slightly to accommodate indicator if needed, or keep 180 and put indicator below
+              child: PageView.builder(
+                controller: _pageController,
                 itemCount: featuredArtists.length,
                 itemBuilder: (context, index) {
                   final artist = featuredArtists[index];
-                  return _buildFeaturedCard(context, artist);
+                  // Padding to simulate spacing between cards
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: _buildFeaturedCard(context, artist),
+                  );
                 },
               ),
             ),
+            const SizedBox(height: 10),
+            const SizedBox(height: 10),
+            Center(
+              child: _buildCustomPageIndicator(),
+            ),
 
-            const SizedBox(height: 20),
 
             // Section 2: Discipline Selector
             SizedBox(
@@ -157,7 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            const SizedBox(height: 10),
 
             // Section 3: Subcategories (Only if Músicos is selected)
             if (selectedDiscipline == 'Músicos')
@@ -185,7 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-            const SizedBox(height: 20),
 
             // Section 4: Vertical List
             const Padding(
@@ -212,9 +220,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFeaturedCard(BuildContext context, Map<String, String> artist) {
-    return Container(
-      width: 250,
-      margin: const EdgeInsets.only(right: 12),
+    return SizedBox( // Changed from Container with width to SizedBox/Expanded behavior via PageView
+      // width: 250, // Removed fixed width as PageView handles it with viewportFraction
+      // margin: const EdgeInsets.only(right: 12), // Margin handled by padding in itemBuilder
       child: Card(
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -235,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
                 ),
               ),
             ),
@@ -249,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                    Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(4),
                     ),
                      child: Text(
@@ -334,6 +342,40 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCustomPageIndicator() {
+    return AnimatedBuilder(
+      animation: _pageController,
+      builder: (context, child) {
+        // Current page (can be fractional)
+        double page = 0;
+        if (_pageController.hasClients && _pageController.position.haveDimensions) {
+          page = _pageController.page ?? 0;
+        }
+
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(featuredArtists.length, (index) {
+             // Calculate how "active" this dot is (0.0 to 1.0)
+            double selectedness = 1.0 - (page - index).abs().clamp(0.0, 1.0);
+            // Example: expands width from 8 to 24 based on selectedness
+            double width = 8.0 + (16.0 * selectedness);
+            Color color = Color.lerp(Colors.grey, Colors.deepPurple, selectedness)!;
+
+            return Container(
+              height: 8,
+              width: width,
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            );
+          }),
+        );
+      },
     );
   }
 }
