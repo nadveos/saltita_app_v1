@@ -8,14 +8,13 @@ class UserMapper {
   static UserEntity toUserEntity(User user) {
     return UserEntity(
       artistName: user.artistName,
-      collectionId: user.collectionId,
-      collectionName: user.collectionName,
       email: user.email,
       emailVisibility: user.emailVisibility,
       fullName: user.fullName,
-      id: user.id,
       role: user.role,
       verified: user.verified,
+      password: user.password,
+      passwordConfirm: user.passwordConfirm,
     );
   }
 

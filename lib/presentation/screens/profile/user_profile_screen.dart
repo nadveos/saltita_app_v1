@@ -1,10 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:saltita/presentation/providers/providers.dart';
 
-class UserProfileScreen extends StatelessWidget {
+class UserProfileScreen extends ConsumerWidget {
   const UserProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userState = ref.watch(authProvider);
+
+    if (userState == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Mi Perfil')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+               const Icon(Icons.account_circle, size: 100, color: Colors.grey),
+               const SizedBox(height: 20),
+               const Text('Inicia sesión para ver tu perfil', style: TextStyle(fontSize: 18)),
+               const SizedBox(height: 30),
+               FilledButton(
+                onPressed: () {
+                   // TODO: Implement Login
+                }, 
+                child: const Text('Iniciar Sesión')
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: () {
+                  context.push('/register');
+                }, 
+                child: const Text('Registrarse')
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Mi Perfil')),
       body: ListView(
@@ -20,7 +55,8 @@ class UserProfileScreen extends StatelessWidget {
                   child: Icon(Icons.person, size: 50, color: Colors.white),
                 ),
                 const SizedBox(height: 10),
-                const Text('Usuario Demo', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(userState.fullName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(userState.email, style: const TextStyle(color: Colors.grey)),
                 TextButton(onPressed: (){}, child: const Text('Editar perfil'))
               ],
             ),
@@ -50,7 +86,9 @@ class UserProfileScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Cerrar sesión', style: TextStyle(color: Colors.red)),
-            onTap: () {},
+            onTap: () {
+               ref.read(authProvider.notifier).clearUser();
+            },
           ),
         ],
       ),

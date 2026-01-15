@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saltita/presentation/screens/screens.dart';
+import 'package:saltita/presentation/widgets/auth/register.dart';
 import 'package:saltita/presentation/widgets/shared/scaffold_with_nav_bar.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -83,6 +84,11 @@ final router = GoRouter(
           ],
         ),
       ],
+    ),
+
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => Register(),
     ),
   ],
 );

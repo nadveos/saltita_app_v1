@@ -8,6 +8,8 @@ class User {
     String id;
     String role;
     bool verified;
+    String password;
+    String passwordConfirm;
 
     User({
         required this.artistName,
@@ -19,6 +21,8 @@ class User {
         required this.id,
         required this.role,
         required this.verified,
+        required this.password,
+        required this.passwordConfirm,
     });
 
     User copyWith({
@@ -31,6 +35,8 @@ class User {
         String? id,
         String? role,
         bool? verified,
+        String? password,
+        String? passwordConfirm,
     }) => 
         User(
             artistName: artistName ?? this.artistName,
@@ -42,5 +48,7 @@ class User {
             id: id ?? this.id,
             role: role ?? this.role,
             verified: verified ?? this.verified,
+            password: password ?? this.password,
+            passwordConfirm: passwordConfirm ?? this.passwordConfirm,
         );
 }

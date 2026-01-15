@@ -11,17 +11,16 @@ final pb = PocketBase('https://testauth.meapp.com.ar');
 
   
   @override
-  Future<UserEntity> createUser(UserEntity user) async {
+  Future<UserEntity> createUser(UserEntity user, String password) async {
     final body ={
-        'artistName': user.artistName,
-        'collectionId': user.collectionId,
-        'collectionName': user.collectionName,
+        'artist_name': user.artistName,
         'email': user.email,
-        'emailVisibility': user.emailVisibility,
-        'fullName': user.fullName,
-        'id': user.id,
+        'emailVisibility': true,
+        'full_name': user.fullName,
         'role': user.role,
-        'verified': user.verified,
+
+        'password': password,
+        'passwordConfirm': password,
       };
     final record = await pb.collection('users').create(
       body:body
