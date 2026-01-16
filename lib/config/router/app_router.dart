@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saltita/presentation/screens/screens.dart';
+import 'package:saltita/presentation/widgets/auth/login.dart';
 import 'package:saltita/presentation/widgets/auth/register.dart';
 import 'package:saltita/presentation/widgets/shared/scaffold_with_nav_bar.dart';
 
@@ -89,6 +90,10 @@ final router = GoRouter(
     GoRoute(
       path: '/register',
       builder: (context, state) => Register(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
     ),
   ],
 );

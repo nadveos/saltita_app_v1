@@ -29,6 +29,12 @@ final pb = PocketBase('https://testauth.meapp.com.ar');
   }
 
   @override
+  Future<UserEntity> loginUser(String email, String password) async {
+    final authData = await pb.collection('users').authWithPassword(email, password);
+    return UserEntity.fromJson(authData.record.toJson());
+  }
+
+  @override
   Future<void> deleteUser(String id) {
     // TODO: implement deleteUser
     throw UnimplementedError();

@@ -11,5 +11,6 @@ final userDatasourceProvider = Provider((ref) => UserDatasourceImpl());
 final userRepositoryProvider = Provider((ref) => UserRepositoryImpl(usersDatasources: ref.watch(userDatasourceProvider)));
 
 final authProvider = StateNotifierProvider<AuthProvider, UserEntity?>((ref) {
-  return AuthProvider(null);
+  final repository = ref.watch(userRepositoryProvider);
+  return AuthProvider(null, repository);
 });

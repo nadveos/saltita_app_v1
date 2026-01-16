@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saltita/presentation/providers/providers.dart';
+import 'package:saltita/presentation/providers/settings_provider.dart';
 
 class UserProfileScreen extends ConsumerWidget {
   const UserProfileScreen({super.key});
@@ -23,7 +24,7 @@ class UserProfileScreen extends ConsumerWidget {
                const SizedBox(height: 30),
                FilledButton(
                 onPressed: () {
-                   // TODO: Implement Login
+                   context.push('/login');
                 }, 
                 child: const Text('Iniciar Sesión')
               ),
@@ -75,7 +76,9 @@ class UserProfileScreen extends ConsumerWidget {
             leading: const Icon(Icons.settings),
             title: const Text('Configuración'),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
+            onTap: () {
+              _showConfigModal(context, ref);
+            },
           ),
           ListTile(
             leading: const Icon(Icons.swap_horiz),
@@ -89,6 +92,103 @@ class UserProfileScreen extends ConsumerWidget {
             onTap: () {
                ref.read(authProvider.notifier).clearUser();
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showConfigModal(BuildContext context, WidgetRef ref) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        final settings = ref.watch(settingsProvider);
+        final settingsNotifier = ref.read(settingsProvider.notifier);
+
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Configuración',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                SwitchListTile(
+                  title: const Text('Habilitar biometría'),
+                  value: settings.isBiometricEnabled,
+                  onChanged: (value) {
+                    settingsNotifier.toggleBiometric(value);
+                  },
+                ),
+                SwitchListTile(
+                  title: const Text('Tema Oscuro'),
+                  value: settings.isDark,
+                  onChanged: (value) {
+                    settingsNotifier.toggleTheme(value);
+                  },
+                ),
+                SwitchListTile(
+                  title: const Text('Alto Contraste'),
+                  value: settings.isHighContrast,
+                  onChanged: (value) {
+                    settingsNotifier.toggleHighContrast(value);
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.delete_forever, color: Colors.red),
+                  title: const Text('Eliminar cuenta permanentemente', style: TextStyle(color: Colors.red)),
+                  onTap: () {
+                    Navigator.pop(context); // Close modal first
+                    _showDeleteAccountDialog(context, ref);
+                  },
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar cuenta'),
+        content: const Text('¿Estás seguro de que deseas eliminar tu cuenta permanentemente? Esta acción no se puede deshacer.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              // TODO: Implement actual delete logic
+              ref.read(authProvider.notifier).clearUser();
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Cuenta eliminada')),
+              );
+            },
+            child: const Text('Eliminar'),
           ),
         ],
       ),

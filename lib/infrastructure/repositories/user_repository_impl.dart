@@ -17,6 +17,11 @@ class UserRepositoryImpl implements UsersRepositories {
   }
 
   @override
+  Future<UserEntity> loginUser(String email, String password) {
+    return usersDatasources.loginUser(email, password);
+  }
+
+  @override
   Future<void> deleteUser(String id) {
     // TODO: implement deleteUser
     throw UnimplementedError();
